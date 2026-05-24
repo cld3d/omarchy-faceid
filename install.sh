@@ -95,10 +95,29 @@ echo "========================================"
 echo "  Face ID setup complete!"
 echo "========================================"
 echo ""
-echo "Next steps:"
-echo "  1. Enroll face:   sudo howdy add"
-echo "  2. Test compare:  sudo $PAM_HELPER"
-echo "  3. Test sudo:     sudo -k && sudo -v"
-echo "  4. Lock screen & unlock"
-echo "  5. Reboot to test SDDM login"
+
+read -rp "Enroll your face now? [Y/n] " yn
+if [[ ${yn:-y} =~ ^[Yy]$ ]]; then
+  sudo howdy add
+fi
+
+read -rp "Test face matching? [Y/n] " yn
+if [[ ${yn:-y} =~ ^[Yy]$ ]]; then
+  echo "Look at the camera..."
+  if sudo $PAM_HELPER; then
+    echo "Face matched!"
+  else
+    echo "No face detected."
+  fi
+fi
+
+read -rp "Test sudo with face auth? [Y/n] " yn
+if [[ ${yn:-y} =~ ^[Yy]$ ]]; then
+  sudo -k
+  if sudo -v; then
+    echo "sudo face auth works!"
+  fi
+fi
+
 echo ""
+echo "Done. Lock screen to test hyprlock, or reboot to test SDDM login."
